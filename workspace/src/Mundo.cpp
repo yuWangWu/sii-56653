@@ -1,7 +1,6 @@
 // Mundo.cpp: implementation of the CMundo class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <fstream>
 #include "Mundo.h"
 #include "glut.h"
 
@@ -9,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <iostream>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -115,6 +115,16 @@ void CMundo::OnDraw()
 
 void CMundo::OnTimer(int value)
 {	
+	if(puntos1 >= 3) {
+		fifo << "Juego terminado, gana jugador 1." << std::endl;
+		exit(0);
+	}
+
+	if(puntos2 >= 3) {
+		fifo << "Juego terminado, gana jugador 2." << std::endl;
+		exit(0);
+	}
+
 	jugador1.Mueve(0.025f);
 	jugador2.Mueve(0.025f);
 	esfera.Mueve(0.025f);
@@ -135,6 +145,7 @@ void CMundo::OnTimer(int value)
 		esfera.velocidad.x=2+2*rand()/(float)RAND_MAX;
 		esfera.velocidad.y=2+2*rand()/(float)RAND_MAX;
 		puntos2++;
+		fifo << "Jugador 2 marca 1 punto, lleva un total de " << puntos2 << std::endl;
 	}
 
 	if(fondo_dcho.Rebota(esfera))
@@ -144,6 +155,7 @@ void CMundo::OnTimer(int value)
 		esfera.velocidad.x=-2-2*rand()/(float)RAND_MAX;
 		esfera.velocidad.y=-2-2*rand()/(float)RAND_MAX;
 		puntos1++;
+		fifo << "Jugador 1 marca 1 punto, lleva un total de " << puntos1 << std::endl;
 	}
 
 }
@@ -164,6 +176,14 @@ void CMundo::OnKeyboardDown(unsigned char key, int x, int y)
 
 void CMundo::Init()
 {
+	// Apertura de la tuberia
+	fifo.open("/tmp/tenisFIFO");
+	if (!fifo.is_open()) {
+		std::cerr << "No se ha podido abrir el FIFO." << std::endl;
+	}
+
+	fin = 0;
+
 	Plano p;
 //pared inferior
 	p.x1=-7;p.y1=-5;

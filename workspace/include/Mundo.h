@@ -5,6 +5,7 @@
 #if !defined(AFX_MUNDO_H__9510340A_3D75_485F_93DC_302A43B8039A__INCLUDED_)
 #define AFX_MUNDO_H__9510340A_3D75_485F_93DC_302A43B8039A__INCLUDED_
 
+#include <fstream>
 #include <vector>
 #include "Plano.h"
 
@@ -36,6 +37,9 @@ public:
 
 	int puntos1;
 	int puntos2;
+	bool fin;
+
+	std::ofstream fifo;
 };
 
 #endif // !defined(AFX_MUNDO_H__9510340A_3D75_485F_93DC_302A43B8039A__INCLUDED_)
