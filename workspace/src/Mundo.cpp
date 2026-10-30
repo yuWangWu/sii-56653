@@ -9,6 +9,9 @@
 #include <string.h>
 #include <math.h>
 #include <iostream>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/mman.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -125,6 +128,24 @@ void CMundo::OnTimer(int value)
 		exit(0);
 	}
 
+	botParams->esfera = esfera;
+	botParams->raqueta1 = jugador2;
+
+	switch (botParams->accion) {
+		case -1:
+			jugador2.velocidad.y = -4;
+			break;
+
+		case 1:
+			jugador2.velocidad.y = 4;
+			break;
+
+		case 0:
+		default:
+			jugador2.velocidad.y = 0;
+			break;
+	}
+
 	jugador1.Mueve(0.025f);
 	jugador2.Mueve(0.025f);
 	esfera.Mueve(0.025f);
@@ -164,12 +185,12 @@ void CMundo::OnKeyboardDown(unsigned char key, int x, int y)
 {
 	switch(key)
 	{
-//	case 'a':jugador1.velocidad.x=-1;break;
-//	case 'd':jugador1.velocidad.x=1;break;
+	// case 'a':jugador1.velocidad.x=-1;break;
+	// case 'd':jugador1.velocidad.x=1;break;
 	case 's':jugador1.velocidad.y=-4;break;
 	case 'w':jugador1.velocidad.y=4;break;
-	case 'l':jugador2.velocidad.y=-4;break;
-	case 'o':jugador2.velocidad.y=4;break;
+	// case 'l':jugador2.velocidad.y=-4;break;
+	// case 'o':jugador2.velocidad.y=4;break;
 
 	}
 }
@@ -182,7 +203,20 @@ void CMundo::Init()
 		std::cerr << "No se ha podido abrir el FIFO." << std::endl;
 	}
 
-	fin = 0;
+	int fd = open("/tmp/datosBot.txt", O_RDWR | O_CREAT | O_TRUNC, 0666);
+	if (fd == -1) {
+		std::cerr << "No se ha podido crear el fichero compartido con el Bot" << std::endl;
+		exit(-1);
+	}
+
+	ftruncate(fd, sizeof(DatosMemCompartida));
+	botParams = (DatosMemCompartida*) mmap(NULL, sizeof(DatosMemCompartida), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+	close(fd);
+
+	if (botParams == MAP_FAILED) {
+		std::cerr << "Error en la proyeccion mmap del fichero" << std::endl;
+		exit(-1);
+	}
 
 	Plano p;
 //pared inferior
