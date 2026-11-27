@@ -35,11 +35,11 @@ int main(int argc,char* argv[])
 	{
 		usleep(25000);
 
-		float AlturaCentroPala = dat->raqueta1.y2 - (dat->raqueta1.y2 - dat->raqueta1.y1) / 2;
+		float AlturaCentroPala = (dat->raqueta1.y2 + dat->raqueta1.y1) / 2;
 		float AlturaCentroEsfera = dat->esfera.centro.y;
 
-		if (AlturaCentroPala < AlturaCentroEsfera) dat->accion = 1;
-		else if (AlturaCentroPala > AlturaCentroEsfera) dat->accion = -1;
+		if (AlturaCentroEsfera > (AlturaCentroPala + 0.5f)) dat->accion = 1;
+		else if (AlturaCentroEsfera < (AlturaCentroPala - 0.5f)) dat->accion = -1;
 		else dat->accion = 0;
 	}
 	return 0;

@@ -40,7 +40,11 @@ public:
 	int puntos1;
 	int puntos2;
 
+	int ultimaaccion = 0;
+
 	std::ofstream fifo;
+	int fdTuberia;
+	int fdTeclas;
 	DatosMemCompartida* botParams;
 };
 
